@@ -1,3 +1,35 @@
 namespace Mankala {
+
+    public interface BoardFactory {
+
+    }
     
+    public class Board : BoardFactory {
+
+        public HomePit head;
+        public RuleSet rules;
+        private int pitAmount;
+        private int playerAmount;
+        private int seedAmount;
+
+
+        private void Board(int pitAmount, int playerAmount, int seedAmount, RuleSet rules) {
+
+            this.rules = rules;
+            this.pitAmount = pitAmount;
+            this.playerAmount = playerAmount;
+            this.seedAmount = seedamount;
+
+            MakeList()
+        }
+
+
+        private void MakeList() {
+
+            head = new HomePit();
+
+
+        }
+
+    }
 }
