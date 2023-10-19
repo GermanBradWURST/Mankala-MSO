@@ -17,5 +17,11 @@ namespace Mankala {
             return p.score;
 
         }
+
+        public void increaseScore(Player p, int i) {
+
+            p.score += i;
+            
+        }
     }
 }

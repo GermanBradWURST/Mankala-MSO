@@ -30,6 +30,8 @@ namespace Mankala {
 
     public class SmallPit : Pit {
         
+        SmallPit oppositePit;
+
         public SmallPit(int amount) {
             this.amount = amount;
             
@@ -41,6 +43,10 @@ namespace Mankala {
             this.amount = a - subtract;
             
         }
+
+        //public SmallPit findOpposite(SmallPit p) {
+
+        //}
 
 
     }
