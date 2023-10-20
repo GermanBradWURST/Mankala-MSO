@@ -7,12 +7,14 @@ namespace Mankala {
 
     public class Mankala : IBoardFactory {
 
-        Player currentPlayer;
-        List<Player> playerList;
-        Board board;
+        public Player currentPlayer;
+        public List<Player> playerList;
+        public Board board;
 
         int playerAmount;
-        //RuleSet rules;
+        public RuleSet rules;
+
+        public Mankala() {}
 
         public void newBoard(int i, RuleSet r)
         {   
@@ -31,8 +33,14 @@ namespace Mankala {
 
         }
 
+        public void getRuleSet() {
+            rules = new ConcreteRules();
+        }
 
-        
+        public bool validMove() {
+            rules.checkValidity()
+        }
+
 
 
         public void nextPlayer() {
