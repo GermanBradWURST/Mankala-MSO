@@ -1,8 +1,9 @@
 namespace Mankala {
 
-    public abstract class Pit {
+    public abstract class Pit 
+    {
 
-        protected int amount;
+        public int amount;
 
         protected Pit nextPit;
 
@@ -10,7 +11,8 @@ namespace Mankala {
 
         public Pit() {}
 
-        public void AddAmount(int add) {
+        public void AddAmount(int add) 
+        {
 
             int a = this.amount;
             this.amount = a + add;
@@ -20,24 +22,31 @@ namespace Mankala {
 
     }
 
-    public class HomePit : Pit {
+    public class HomePit : Pit 
+    {
 
-        public HomePit(int amount) {
+        public HomePit(int amount, Player p) 
+        {
             this.amount = 0;
+            this.p = p;
 
         }
     }
 
-    public class SmallPit : Pit {
+    public class SmallPit : Pit 
+    {
         
         SmallPit oppositePit;
 
-        public SmallPit(int amount) {
+        public SmallPit(int amount, Player p) 
+        {
             this.amount = amount;
+            this.p = p;
             
         }
 
-        public void RemoveAmount(int subtract) {
+        public void RemoveAmount(int subtract) 
+        {
 
             int a = this.amount;
             this.amount = a - subtract;

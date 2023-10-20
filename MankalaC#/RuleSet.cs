@@ -1,24 +1,31 @@
 namespace Mankala {
 
-    public abstract class RuleSet {
+    public abstract class RuleSet 
+    {
 
 
         public List<Rules> extraRules;
         
-        public RuleSet() {}
+        public RuleSet()
+        {
+
+        }
 
         public abstract bool checkValidity();
 
-        public List<Rules> makeRuleSet() {
+        public List<Rules> makeRuleSet() 
+        {
             List<Rules> rulelist = new List<Rules>();
             Console.WriteLine("Do you wish to add Capturing to the ruleset?: Y/N");
             string cansw = Console.ReadLine();
-            if (cansw == "Y") {
+            if (cansw == "Y") 
+            {
                 rulelist.Add(new DecoratorCapturing());
             }
             Console.WriteLine("Do you wish to add RelaySowing to the ruleset?: Y/N");
             string rsansw = Console.ReadLine();
-            if (rsansw == "Y") {
+            if (rsansw == "Y") 
+            {
                 rulelist.Add(new DecoratorRelaySowing());
             }
             
@@ -27,9 +34,11 @@ namespace Mankala {
     }
 
 
-    public class ConcreteRules : RuleSet {
+    public class ConcreteRules : RuleSet 
+    {
 
-        public ConcreteRules() {
+        public ConcreteRules() 
+        {
             extraRules = makeRuleSet();
         }
 
@@ -39,27 +48,38 @@ namespace Mankala {
         }
     }
 
-    public abstract class Rules : RuleSet {
+    public abstract class Rules : RuleSet 
+    {
 
 
 
     }
 
-    public class DecoratorCapturing : Rules {
+    public class DecoratorCapturing : Rules 
+    {
 
-        public DecoratorCapturing() {}
+        public DecoratorCapturing() 
+        {
 
-        public override bool checkValidity() {
+        }
+
+        public override bool checkValidity() 
+        {
             return true;
         }
 
     }
 
-    public class DecoratorRelaySowing : Rules {
+    public class DecoratorRelaySowing : Rules 
+    {
 
-        public DecoratorRelaySowing() {}
+        public DecoratorRelaySowing() 
+        {
 
-        public override bool checkValidity() {
+        }
+
+        public override bool checkValidity() 
+        {
             return true;
         }
 
