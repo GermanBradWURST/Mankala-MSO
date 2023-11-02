@@ -9,44 +9,37 @@ namespace Mancala
 
     public class Board
     {
-        public List<Player> playerList;
         public int size;
         public int stoneAmount;
         public int[,] boardArray;
         public int playerAmount;
         public int totalStones;
-        public Player currentP;
 
-        public Board(List<Player> pl, int s, int sA)
+        public Board(int playerAmount, int size, int stoneAmount)
         {
-            this.playerList = pl;
-            this.size = s;
-            this.stoneAmount = sA;
-            this.playerAmount = playerList.Count();
-            this.currentP = playerList[0];
+            this.size = size;
+            this.stoneAmount = stoneAmount;
+            this.playerAmount = playerAmount;
             this.totalStones = size * stoneAmount * playerAmount;
             makeBoard();
-
         }
 
         private void makeBoard()
         {
             boardArray = new int[(size + 1), playerAmount];
 
-
             for (int y = 0; y < playerAmount; y++)
             {
                 for (int x = 0; x < size; x++)
                 {
-                    boardArray[x, y] = 4;
+                    boardArray[x, y] = stoneAmount;
                 }
 
                 boardArray[size, y] = 0;
             }
-
         }
 
-        public void printBoard()
+        public void printBoard(List<Player> playerList, Player currentPlayer)
         {
             string cpstring = "    ";
 
@@ -61,7 +54,7 @@ namespace Mancala
 
                 string homePit = $"{boardArray[size, y]}";
 
-                if (playerList[y] == currentP)
+                if (playerList[y] == currentPlayer)
                 {
                     cpstring += smallPit + " | " + homePit;
                 }
@@ -72,97 +65,12 @@ namespace Mancala
             }
 
             Console.WriteLine(cpstring);
-            Console.WriteLine(currentP.name);
+            Console.WriteLine(currentPlayer.name);
         }
 
-        public int getIndex(Player p)
+        public bool checkNotEmpty(int indexPit, int indexPlayer)
         {
-            return playerList.IndexOf(p);
-        }
-
-        public void sowing(int i)
-        {
-            int indexPlayer = getIndex(currentP);
-            int indexPit = i - 1;
-            int amount = boardArray[indexPit, indexPlayer];
-            boardArray[indexPit, indexPlayer] = 0;
-
-            while (amount > 0)
-            {
-                if (indexPit == size)
-                {
-                    indexPit = 0;
-
-                    if (indexPlayer + 1 == playerAmount)
-                    {
-                        indexPlayer = 0;
-                    }
-                    else
-                    {
-                        indexPlayer ++;
-                    }
-                }
-
-                else
-                {
-                    indexPit++;
-                }
-
-                amount--;
-                boardArray[indexPit, indexPlayer]++;
-
-            }
-        }
-
-        public void nextPlayer()
-        {
-            int index = getIndex(currentP);
-
-            if (index == playerAmount - 1)
-            {
-                currentP = playerList[0];
-            }
-
-            else
-            {
-                currentP = playerList[index + 1];
-            }
-        }
-
-        public int getPoint(Player p)
-        {
-            int index = getIndex(p);
-            return boardArray[size, index];
-
-        }
-
-        public List<int> getPoints()
-        {
-            List<int> points = new List<int>();
-
-            foreach (Player p in playerList)
-            {
-                int index = getIndex(p);
-                points.Add(boardArray[size, index]);
-            }
-            return points;
-        }
-
-        public void printPoints()
-        {
-            List<int> points = getPoints();
-            for (int x = 0; x < points.Count(); x++)
-            {
-                Player p = playerList[x];
-                Console.WriteLine($"{p.name} : {points[x]}");
-            }
-
-        }
-
-        public bool checkNotEmpty(int i)
-        {
-            int indexPit = i;
-            int indexPlayer = getIndex(currentP);
+            //int indexPlayer = getIndex(currentP);
             if (boardArray[indexPit, indexPlayer] != 0)
                 return true;
             return false;
@@ -183,9 +91,9 @@ namespace Mancala
 
         }
 
-        public bool checkIfRowEmpty()
+        public bool checkIfRowEmpty(int i)
         {
-            int i = getIndex(currentP);
+            //int i = getIndex(currentP);
 
             for (int x = 0; x < size; x++)
             {
@@ -195,5 +103,7 @@ namespace Mancala
 
             return true;
         }
+
+
     }
 }

@@ -10,6 +10,7 @@ namespace Mancala
     public class Player
     {
         public string name = "<name>";
+        private int score = 0;
         public Player()
         {
             Console.Write("Player name: ");
@@ -17,5 +18,11 @@ namespace Mancala
 
             if (input != "") { name = input; }
         }
+
+        public int getScore()
+        { return this.score; }
+
+        public void updateScore(int newScore)
+        { this.score = newScore; }
     }
 }

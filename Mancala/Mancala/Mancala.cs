@@ -1,50 +1,120 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Mancala
 {
-
-    public interface BoardFactory
+    
+    public abstract class MancalaFactory
     {
-        Board createBoard(int pA, int s, int sA);
-    }
+        public Player currentPlayer;
+        public List<Player> playerList = new List<Player>();
+        public Board board;
 
-
-    public class Mancala : BoardFactory
-    {
-        protected Board board;
-        protected RuleSet ruleset;
-
-        public Mancala(int pA, int s, int sA)
+        public void gameFlow()
         {
-            board = createBoard(pA, s, sA);
-            board.printBoard();
+            addPlayers();
+            currentPlayer = playerList[0];
+            board.printBoard(playerList, currentPlayer);
 
             gameLoop();
 
-            wait();
+            printWinner();
         }
 
-        public void gameLoop()
+        public abstract void gameLoop();
+
+        public void addPlayers()
         {
-            while (gameEnd() == false)
+            for (int i = 0; i < board.playerAmount; i++)
             {
-                if (board.checkIfRowEmpty() == false)
-                {
-                    board.printBoard();
-                    int choice = takeInput();
-                    board.sowing(choice);
-                }
-                
-                board.nextPlayer();
+                Player p = new Player();
+                playerList.Add(p);
+            }
+        }
+
+        public int getIndex(Player p)
+        {
+            return playerList.IndexOf(p);
+        }
+
+        public void nextPlayer()
+        {
+            int index = getIndex(currentPlayer);
+
+            if (index == board.playerAmount - 1)
+            {
+                currentPlayer = playerList[0];
             }
 
-            printWinner();
+            else
+            {
+                currentPlayer = playerList[index + 1];
+            }
+        }
+
+        public void updateScores()
+        {
+            foreach (Player p in playerList)
+            {
+                int points = getPoint(p);
+                p.updateScore(points);
+            }
+        }
+
+        private List<Player> getWinner()
+        {
+            List<Player> pL = new List<Player>();
+            int baseline = 0;
+
+            foreach (Player p in playerList)
+            {
+                int pS = p.getScore();
+                if (pS > baseline)
+                {
+                    pL.Clear();
+                    baseline = pS;
+                    pL.Add(p);
+                }
+
+                else if (pS == baseline)
+                {
+                    pL.Add(p);
+                }
+
+            }
+
+            return pL;
+        }
+        private void printWinner()
+        {
+            List<Player> winPlayers = getWinner();
+
+            if (winPlayers.Count() > 1)
+            {
+                Console.WriteLine("It's a draw between the following players: ");
+                foreach (Player p in winPlayers)
+                {
+                    Console.WriteLine(p.name, $"| {getPoint(p)} points");
+                }
+            }
+            else
+            {
+                Player p = winPlayers[0];
+                Console.WriteLine($"The winner is: {p.name} with {getPoint(p)} points");
+            }
+        }
+
+        public int getPoint(Player p)
+        {
+            int index = getIndex(p);
+            return board.boardArray[board.size, index];
 
         }
+
 
         public int takeInput()
         {
@@ -57,7 +127,7 @@ namespace Mancala
                     int pitIndex = int.Parse(input);
                     if (1 <= pitIndex && pitIndex <= board.size)
                     {
-                        if (board.checkNotEmpty(pitIndex-1))
+                        if (board.checkNotEmpty(pitIndex - 1, getIndex(currentPlayer)))
                         {
                             return pitIndex;
                         }
@@ -76,75 +146,99 @@ namespace Mancala
 
         }
 
-        public Board createBoard(int pA, int s, int sA)
+
+    }
+
+
+    public class Mancala : MancalaFactory
+    {
+        public Mancala(int playerAmount, int size, int stoneAmount)
         {
-            List<Player> playerList = addPlayers(pA);
-            return new Board(playerList, s, sA);
+            board = new Board(playerAmount, size, stoneAmount);
         }
 
-        private List<Player> addPlayers(int pA)
+        public override void gameLoop()
         {
-            List<Player> playerList = new List<Player>();
-            for (int i = 0; i < pA; i++)
+            while (board.checkIfBoardEmpty() == false)
             {
-                Player p = new Player();
-                playerList.Add(p);
-            }
-            return playerList;
-        }
-
-        private void wait()
-        {
-            Console.ReadLine();
-        }
-
-        private bool gameEnd()
-        {
-            return board.checkIfBoardEmpty();
-        }
-
-        private List<Player> getWinner()
-        {
-            List<Player> pL = new List<Player>();
-            List<int> points = board.getPoints();
-            List<int> indexes = new List<int>();
-            int baseline = points.Max();
-            int index = 0;
-
-            foreach (int i in points)
-            {
-                if (i == baseline)
-                    indexes.Add(index);
-
-                index++;
-            }
-
-            foreach (int i in indexes)
-            {
-                pL.Add(board.playerList[i]);
-            }
-
-            return pL;
-        }
-
-        private void printWinner()
-        {
-            List<Player> winPlayers = getWinner();
-
-            if (winPlayers.Count() > 1)
-            {
-                Console.WriteLine("It's a draw between the following players: ");
-                foreach (Player p in winPlayers)
+                if (board.checkIfRowEmpty(getIndex(currentPlayer)) == false)
                 {
-                    Console.WriteLine(p.name, $"| {board.getPoint(p)} points");
+                    board.printBoard(playerList, currentPlayer);
+                    int choice = takeInput();
+                    sowing(choice);
                 }
+
+                updateScores();
+                nextPlayer();
             }
-            else
+        }
+
+        public void sowing(int i)
+        {
+            int [,] boardArray = board.boardArray;
+            int indexPlayer = getIndex(currentPlayer);
+            int indexPit = i - 1;
+            int amount = boardArray[indexPit, indexPlayer];
+            boardArray[indexPit, indexPlayer] = 0;
+
+            while (amount > 0)
             {
-                Player p = winPlayers[0];
-                Console.WriteLine($"The winner is: {p.name} with {board.getPoint(p)} points");
+                if (indexPit == board.size)
+                {
+                    indexPit = 0;
+
+                    if (indexPlayer + 1 == board.playerAmount)
+                    {
+                        indexPlayer = 0;
+                    }
+                    else
+                    {
+                        indexPlayer++;
+                    }
+                }
+
+                else
+                {
+                    indexPit++;
+                }
+
+                amount--;
+                boardArray[indexPit, indexPlayer]++;
+
             }
+
+            board.boardArray = boardArray;
+        }
+    }
+
+
+    public class Wari : MancalaFactory
+    {
+        public Wari(int playerAmount, int size, int stoneAmount)
+        {
+            board = new Board(playerAmount, size, stoneAmount);
+        }
+
+        public override void gameLoop()
+        {
+            
         }
 
     }
+
+
+    public class ManWari : MancalaFactory
+    {
+        public ManWari(int playerAmount, int size, int stoneAmount)
+        {
+            board = new Board(playerAmount, size, stoneAmount);
+        }
+
+        public override void gameLoop()
+        {
+            
+        }
+
+    }
+
 }

@@ -9,7 +9,13 @@
 
         public static void Main()
         {
-            Mancala game = new Mancala(playerAmount, size, stoneAmount);
+            Mancala mancalaGame = new Mancala(playerAmount, size, stoneAmount);
+            Wari wariGame = new Wari(playerAmount, size, stoneAmount);
+            ManWari manwariGame = new ManWari(playerAmount, size, stoneAmount);
+
+            mancalaGame.gameFlow();
+            wariGame.gameFlow();
+            manwariGame.gameFlow();
         }
     }
 }
