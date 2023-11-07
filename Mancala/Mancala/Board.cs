@@ -43,18 +43,26 @@ namespace Mancala
         {
             string cpstring = "    ";
 
-            for (int y = 0; y < playerAmount; y++)
+            for (int y = playerAmount - 1; y >= 0; y--)
             {
                 string smallPit = "";
+                bool isCurrentPlayer = playerList[y] == currentPlayer;
 
                 for (int x = 0; x < size; x++)
                 {
-                    smallPit = smallPit + $"{boardArray[x, y]}";
+                    if (isCurrentPlayer)
+                    {
+                        smallPit = smallPit + $"{boardArray[x, y]}";
+                    }
+                    else
+                    {
+                        smallPit = $"{boardArray[x, y]}" + smallPit;
+                    }
                 }
 
                 string homePit = $"{boardArray[size, y]}";
 
-                if (playerList[y] == currentPlayer)
+                if (isCurrentPlayer)
                 {
                     cpstring += smallPit + " | " + homePit;
                 }
