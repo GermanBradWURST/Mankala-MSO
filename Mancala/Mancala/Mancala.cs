@@ -7,15 +7,24 @@ using System.Threading.Tasks;
 
 namespace Mancala
 {
-    
-    public abstract class MancalaFactory
+
+    public interface RuleSetFactory
+    {
+        public RuleSet newRuleSet();
+    }
+
+    public abstract class MancalaFactory : RuleSetFactory
     {
         public Player currentPlayer;
         public List<Player> playerList = new List<Player>();
         public Board board;
+        public RuleSet ruleSet;
+
+        public abstract RuleSet newRuleSet();
 
         public void gameFlow()
         {
+            ruleSet = newRuleSet();
             addPlayers();
             currentPlayer = playerList[0];
             board.printBoard(playerList, currentPlayer);
@@ -25,7 +34,22 @@ namespace Mancala
             printWinner();
         }
 
-        public abstract void gameLoop();
+        public void gameLoop()
+        {
+            while (board.checkIfBoardEmpty() == false)
+            {
+                int currentPlayerIndex = getIndex(currentPlayer);
+                if (board.checkIfRowEmpty(currentPlayerIndex) == false)
+                {
+                    board.printBoard(playerList, currentPlayer);
+                    int choice = takeInput();
+                    board.boardArray = ruleSet.Sowing.applyRule(board, currentPlayerIndex, choice);
+                }
+
+                updateScores();
+                nextPlayer();
+            }
+        }
 
         public void addPlayers()
         {
@@ -145,8 +169,6 @@ namespace Mancala
             }
 
         }
-
-
     }
 
 
@@ -157,58 +179,16 @@ namespace Mancala
             board = new Board(playerAmount, size, stoneAmount);
         }
 
-        public override void gameLoop()
-        {
-            while (board.checkIfBoardEmpty() == false)
-            {
-                if (board.checkIfRowEmpty(getIndex(currentPlayer)) == false)
-                {
-                    board.printBoard(playerList, currentPlayer);
-                    int choice = takeInput();
-                    sowing(choice);
-                }
+        
 
-                updateScores();
-                nextPlayer();
-            }
+        public override RuleSet newRuleSet()
+        {
+            RuleSet ruleSet = new RuleSet();
+            ruleSet.Sowing = new MancalaSowing();
+            return ruleSet;
         }
 
-        public void sowing(int i)
-        {
-            int [,] boardArray = board.boardArray;
-            int indexPlayer = getIndex(currentPlayer);
-            int indexPit = i - 1;
-            int amount = boardArray[indexPit, indexPlayer];
-            boardArray[indexPit, indexPlayer] = 0;
 
-            while (amount > 0)
-            {
-                if (indexPit == board.size)
-                {
-                    indexPit = 0;
-
-                    if (indexPlayer + 1 == board.playerAmount)
-                    {
-                        indexPlayer = 0;
-                    }
-                    else
-                    {
-                        indexPlayer++;
-                    }
-                }
-
-                else
-                {
-                    indexPit++;
-                }
-
-                amount--;
-                boardArray[indexPit, indexPlayer]++;
-
-            }
-
-            board.boardArray = boardArray;
-        }
     }
 
 
@@ -219,9 +199,11 @@ namespace Mancala
             board = new Board(playerAmount, size, stoneAmount);
         }
 
-        public override void gameLoop()
+        public override RuleSet newRuleSet()
         {
-            
+            RuleSet ruleSet = new RuleSet();
+            ruleSet.Sowing = new WariSowing();
+            return ruleSet;
         }
 
     }
@@ -233,10 +215,13 @@ namespace Mancala
         {
             board = new Board(playerAmount, size, stoneAmount);
         }
+        
 
-        public override void gameLoop()
+        public override RuleSet newRuleSet()
         {
-            
+            RuleSet ruleSet = new RuleSet();
+            ruleSet.Sowing = new WariSowing();
+            return ruleSet;
         }
 
     }
