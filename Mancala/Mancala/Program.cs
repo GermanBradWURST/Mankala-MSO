@@ -13,6 +13,7 @@
             Wari wariGame = new Wari(playerAmount, size, stoneAmount);
             ManWari manwariGame = new ManWari(playerAmount, size, stoneAmount);
 
+            wariGame.gameFlow();
             mancalaGame.gameFlow();
             wariGame.gameFlow();
             manwariGame.gameFlow();
