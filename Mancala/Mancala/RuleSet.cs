@@ -8,8 +8,8 @@ namespace Mancala
 {
     public class RuleSet
     {
-        public Rule WinRule;
         public Rule Sowing;
+        public List<Rule> Rules = new List<Rule>();
 
         public RuleSet() { }
 
@@ -17,29 +17,31 @@ namespace Mancala
 
     public abstract class Rule
     {
-        public abstract int[,] applyRule(Board board, int indexPlayer, int choice);
+        public abstract void applyRule(MancalaFactory game);
     }
 
 
 
     public class MancalaSowing : Rule
     {
+         
         public MancalaSowing() { }
 
-        public override int[,] applyRule(Board board, int indexPlayer, int choice)
+        public override void applyRule(MancalaFactory game)
         {
-            int[,] boardArray = board.boardArray;
-            int indexPit = choice - 1;
+            int[,] boardArray = game.board.boardArray;
+            int indexPit = game.lastChoice - 1;
+            int indexPlayer = game.getIndex(game.currentPlayer);
             int StonesPickedUp = boardArray[indexPit, indexPlayer];
             boardArray[indexPit, indexPlayer] = 0;
 
             while (StonesPickedUp > 0)
             {
-                if (indexPit == board.size)
+                if (indexPit == game.board.size)
                 {
                     indexPit = 0;
 
-                    if (indexPlayer + 1 == board.playerAmount)
+                    if (indexPlayer + 1 == game.board.playerAmount)
                     {
                         indexPlayer = 0;
                     }
@@ -56,10 +58,11 @@ namespace Mancala
 
                 StonesPickedUp--;
                 boardArray[indexPit, indexPlayer]++;
-
             }
 
-            return boardArray;
+
+            game.board.boardArray = boardArray;
+            game.lastHole = (indexPit, indexPlayer);
         }
     }
 
@@ -67,20 +70,21 @@ namespace Mancala
     {
         public WariSowing() { }
 
-        public override int[,] applyRule(Board board, int indexPlayer, int choice)
+        public override void applyRule(MancalaFactory game)
         {
-            int[,] boardArray = board.boardArray;
-            int indexPit = choice - 1;
+            int[,] boardArray = game.board.boardArray;
+            int indexPit = game.lastChoice - 1;
+            int indexPlayer = game.getIndex(game.currentPlayer);
             int StonesPickedUp = boardArray[indexPit, indexPlayer];
             boardArray[indexPit, indexPlayer] = 0;
 
             while (StonesPickedUp > 0)
             {
-                if (indexPit + 1 == board.size)
+                if (indexPit + 1 == game.board.size)
                 {
                     indexPit = 0;
 
-                    if (indexPlayer + 1 == board.playerAmount)
+                    if (indexPlayer + 1 == game.board.playerAmount)
                     {
                         indexPlayer = 0;
                     }
@@ -100,8 +104,28 @@ namespace Mancala
 
             }
 
-            return boardArray;
+            game.board.boardArray = boardArray;
+            game.lastHole = (indexPit, indexPlayer);
         }
+    }
+
+    public class LastInHomePit : Rule
+    {
+        public override void applyRule(MancalaFactory game)
+        {
+            int i1 = game.lastHole.Item1;
+            int i2 = game.lastHole.Item2;
+
+            if (i1 == game.board.size && i2 == game.getIndex(game.currentPlayer))
+            {
+
+            }
+            else
+            {
+                game.nextPlayer();
+            }
+        }
+
     }
 
 }

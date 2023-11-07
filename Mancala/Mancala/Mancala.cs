@@ -19,6 +19,8 @@ namespace Mancala
         public List<Player> playerList = new List<Player>();
         public Board board;
         public RuleSet ruleSet;
+        public int lastChoice;
+        public (int, int) lastHole;
 
         public abstract RuleSet newRuleSet();
 
@@ -34,22 +36,8 @@ namespace Mancala
             printWinner();
         }
 
-        public void gameLoop()
-        {
-            while (board.checkIfBoardEmpty() == false)
-            {
-                int currentPlayerIndex = getIndex(currentPlayer);
-                if (board.checkIfRowEmpty(currentPlayerIndex) == false)
-                {
-                    board.printBoard(playerList, currentPlayer);
-                    int choice = takeInput();
-                    board.boardArray = ruleSet.Sowing.applyRule(board, currentPlayerIndex, choice);
-                }
-
-                updateScores();
-                nextPlayer();
-            }
-        }
+        public abstract void gameLoop();
+        
 
         public void addPlayers()
         {
@@ -179,12 +167,32 @@ namespace Mancala
             board = new Board(playerAmount, size, stoneAmount);
         }
 
-        
+        public override void gameLoop()
+        {
+            while (board.checkIfBoardEmpty() == false)
+            {
+                if (board.checkIfRowEmpty(getIndex(currentPlayer)) == false)
+                {
+                    board.printBoard(playerList, currentPlayer);
+                    lastChoice = takeInput();
+                    ruleSet.Sowing.applyRule(this);
+                    foreach (Rule r in  ruleSet.Rules)
+                    {
+                        r.applyRule(this);
+                    }
+                }
+
+                updateScores();
+            }
+        }
 
         public override RuleSet newRuleSet()
         {
             RuleSet ruleSet = new RuleSet();
             ruleSet.Sowing = new MancalaSowing();
+
+
+            ruleSet.Rules.Add(new LastInHomePit());
             return ruleSet;
         }
 
@@ -199,10 +207,31 @@ namespace Mancala
             board = new Board(playerAmount, size, stoneAmount);
         }
 
+        public override void gameLoop()
+        {
+            while (board.checkIfBoardEmpty() == false)
+            {
+                if (board.checkIfRowEmpty(getIndex(currentPlayer)) == false)
+                {
+                    board.printBoard(playerList, currentPlayer);
+                    lastChoice = takeInput();
+                    ruleSet.Sowing.applyRule(this);
+                    foreach (Rule r in ruleSet.Rules)
+                    {
+                        r.applyRule(this);
+                    }
+                }
+
+                updateScores();
+                nextPlayer();
+            }
+        }
+
         public override RuleSet newRuleSet()
         {
             RuleSet ruleSet = new RuleSet();
             ruleSet.Sowing = new WariSowing();
+            //ruleSet.Rules.Add(new )
             return ruleSet;
         }
 
@@ -215,7 +244,26 @@ namespace Mancala
         {
             board = new Board(playerAmount, size, stoneAmount);
         }
-        
+
+        public override void gameLoop()
+        {
+            while (board.checkIfBoardEmpty() == false)
+            {
+                if (board.checkIfRowEmpty(getIndex(currentPlayer)) == false)
+                {
+                    board.printBoard(playerList, currentPlayer);
+                    lastChoice = takeInput();
+                    ruleSet.Sowing.applyRule(this);
+                    foreach (Rule r in ruleSet.Rules)
+                    {
+                        r.applyRule(this);
+                    }
+                }
+
+                updateScores();
+                nextPlayer();
+            }
+        }
 
         public override RuleSet newRuleSet()
         {
