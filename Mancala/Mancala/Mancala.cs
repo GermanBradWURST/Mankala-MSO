@@ -21,7 +21,12 @@ namespace Mancala
         public RuleSet ruleSet;
         public int lastChoice;
         public (int, int) lastHole;
-        public bool GameEnded = false;
+        public bool gameEnded = false;
+
+        public MancalaFactory (int playerAmount, int size, int stoneAmount)
+        {
+            board = new Board(playerAmount, size, stoneAmount);
+        }
 
         public abstract RuleSet newRuleSet();
 
@@ -163,14 +168,11 @@ namespace Mancala
 
     public class Mancala : MancalaFactory
     {
-        public Mancala(int playerAmount, int size, int stoneAmount)
-        {
-            board = new Board(playerAmount, size, stoneAmount);
-        }
+        public Mancala(int playerAmount, int size, int stoneAmount) : base(playerAmount, size, stoneAmount) { }
 
         public override void gameLoop()
         {
-            while (GameEnded == false)
+            while (gameEnded == false)
             {
                 int indexCurrentPlayer = getIndex(currentPlayer);
                 if (board.checkIfRowEmpty(indexCurrentPlayer) == false)
@@ -206,14 +208,11 @@ namespace Mancala
 
     public class Wari : MancalaFactory
     {
-        public Wari(int playerAmount, int size, int stoneAmount)
-        {
-            board = new Board(playerAmount, size, stoneAmount);
-        }
+        public Wari(int playerAmount, int size, int stoneAmount) : base(playerAmount, size, stoneAmount) { }
 
         public override void gameLoop()
         {
-            while (GameEnded == false)
+            while (gameEnded == false)
             {
                 int indexCurrentPlayer = getIndex(currentPlayer);
                 if (board.checkIfRowEmpty(indexCurrentPlayer) == false)
@@ -249,15 +248,12 @@ namespace Mancala
 
     public class ManWari : MancalaFactory
     {
-        public ManWari(int playerAmount, int size, int stoneAmount)
-        {
-            board = new Board(playerAmount, size, stoneAmount);
-        }
+        public ManWari(int playerAmount, int size, int stoneAmount) : base(playerAmount, size, stoneAmount) { }
 
         public override void gameLoop()
         {
             int indexCurrentPlayer = getIndex(currentPlayer);
-            while (GameEnded == false)
+            while (gameEnded == false)
             {
                 if (board.checkIfRowEmpty(indexCurrentPlayer) == false)
                 {

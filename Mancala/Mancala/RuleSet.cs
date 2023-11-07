@@ -162,7 +162,7 @@ namespace Mancala
             int index = game.getIndex(game.currentPlayer);
             if (game.board.checkIfRowEmpty(index))
             {
-                game.GameEnded = true;
+                game.gameEnded = true;
             }
         }
     }
