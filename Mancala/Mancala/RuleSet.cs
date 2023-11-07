@@ -167,4 +167,28 @@ namespace Mancala
         }
     }
 
+    public class Capturing : Rule
+    {
+        public Capturing() { }
+
+        public override void applyRule(MancalaFactory game)
+        {
+            int currentPlayerIndex = game.getIndex(game.currentPlayer);
+
+            int playerIndex = game.lastHole.Item2;
+            int pitIndex = game.lastHole.Item1;
+
+            (int, int) oppositeHole = game.board.findOppositeHole(game.lastHole);
+            int oppositePit = oppositeHole.Item1;
+            int oppositePlayer = oppositeHole.Item2;
+
+            bool isNotEmpty = game.board.checkNotEmpty(oppositePit, oppositePlayer);
+
+            if (currentPlayerIndex == playerIndex && isNotEmpty)
+            {
+                game.board.boardArray[game.board.size, currentPlayerIndex] += game.board.boardArray[oppositePit, oppositePlayer];
+                game.board.boardArray[oppositePit, oppositePlayer] = 0;
+            }
+        }
+    }
 }

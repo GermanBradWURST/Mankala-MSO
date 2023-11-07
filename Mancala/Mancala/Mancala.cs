@@ -239,6 +239,7 @@ namespace Mancala
             RuleSet ruleSet = new RuleSet();
             ruleSet.Sowing = new WariSowing();
             ruleSet.WinRule = new StdWinRule();
+            ruleSet.Rules.Add(new Capturing());
             ruleSet.Rules.Add(new Wari2or3());
             return ruleSet;
         }

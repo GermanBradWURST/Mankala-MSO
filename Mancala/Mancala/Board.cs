@@ -104,6 +104,35 @@ namespace Mancala
             return true;
         }
 
+        public (int, int) findOppositeHole((int, int) hole) // test
+        {
+            int pitIndex = hole.Item1;
+            int playerIndex = hole.Item2;
+            int counter = -1;
+
+            while (pitIndex < size)
+            {
+                counter++;
+                pitIndex++;
+            }
+
+            if (playerIndex + 1 == playerAmount)
+            {
+                playerIndex = 0;
+            }
+            else
+            {
+                playerIndex++;
+            }
+
+            if (counter < 0)
+            {
+                counter = size;
+            }
+
+            return (counter,  playerIndex);
+        }
+
 
     }
 }
