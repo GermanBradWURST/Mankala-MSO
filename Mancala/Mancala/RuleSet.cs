@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Mancala
 {
-    public class RuleSet
+    public class RuleSet //The game always has a sowing and winning rule, therefore they are given a variable
     {
         public Rule Sowing;
         public Rule WinRule;
-        public List<Rule> Rules = new List<Rule>();
+        public List<Rule> Rules = new List<Rule>(); //Other rules are put in a list, when creating a RuleSet, the order in which you add Rules to this list matters
 
         public RuleSet() { }
 

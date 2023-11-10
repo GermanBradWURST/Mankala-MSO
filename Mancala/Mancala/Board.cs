@@ -76,23 +76,13 @@ namespace Mancala
             Console.WriteLine(currentPlayer.name);
         }
 
-        public bool checkNotEmpty(int indexPit, int indexPlayer)
-        {
-            //int indexPlayer = getIndex(currentP);
-            if (boardArray[indexPit, indexPlayer] != 0)
-                return true;
-            return false;
-        }
 
         public bool checkIfBoardEmpty()
         {
             for (int y = 0; y < playerAmount; y++)
             {
-                for (int x = 0; x < size; x++)
-                {
-                    if (boardArray[x, y] != 0)
-                        return false;
-                }
+                if (!checkIfRowEmpty(y))
+                    return false;
             }
 
             return true;
@@ -101,18 +91,27 @@ namespace Mancala
 
         public bool checkIfRowEmpty(int i)
         {
-            //int i = getIndex(currentP);
-
             for (int x = 0; x < size; x++)
             {
-                if (boardArray[x, i] != 0)
+                if (checkNotEmpty(x, i))
                     return false;
             }
 
             return true;
         }
 
-        public (int, int) findOppositeHole((int, int) hole) // test
+        public bool checkNotEmpty(int indexPit, int indexPlayer)
+        {
+            if (boardArray[indexPit, indexPlayer] != 0)
+                return true;
+
+            return false;
+
+        }
+
+
+
+        public (int, int) findOppositeHole((int, int) hole)
         {
             int pitIndex = hole.Item1;
             int playerIndex = hole.Item2;

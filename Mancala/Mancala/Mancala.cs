@@ -23,7 +23,7 @@ namespace Mancala
         public (int, int) lastHole;
         public bool gameEnded = false;
 
-        public MancalaFactory (int playerAmount, int size, int stoneAmount)
+        public MancalaFactory (int playerAmount, int size, int stoneAmount) //board creation doesn't differ between game modes so it is made in this constructor (subclass constructors refer to their base)
         {
             board = new Board(playerAmount, size, stoneAmount);
         }
@@ -35,7 +35,6 @@ namespace Mancala
             ruleSet = newRuleSet();
             addPlayers();
             currentPlayer = playerList[0];
-            board.printBoard(playerList, currentPlayer);
 
             gameLoop();
 
@@ -54,7 +53,7 @@ namespace Mancala
             }
         }
 
-        public int getIndex(Player p)
+        public int getIndex(Player p) // the index of a player in the playerList is needed so much that it deserved its own function
         {
             return playerList.IndexOf(p);
         }
@@ -74,7 +73,7 @@ namespace Mancala
             }
         }
 
-        public void updateScores()
+        public void updateScores() // even though the score of each player can be found in the boardArray, it is also stored in a Player for clarity and accesibility
         {
             foreach (Player p in playerList)
             {
@@ -83,7 +82,7 @@ namespace Mancala
             }
         }
 
-        private List<Player> getWinner()
+        private List<Player> getWinner() // This returns a list because more players could be tied in first (in which case a tie is declared)
         {
             List<Player> pL = new List<Player>();
             int baseline = 0;
@@ -134,7 +133,7 @@ namespace Mancala
         }
 
 
-        public int takeInput()
+        public int takeInput() // besides taking input, this function also handles invalid input. The only thing to do after invalid input is to retake input, so it handles everything in one function.
         {
             while (true)
             {

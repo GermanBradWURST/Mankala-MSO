@@ -24,5 +24,7 @@ namespace Mancala
 
         public void updateScore(int newScore)
         { this.score = newScore; }
+
+        // resetScore()
     }
 }
