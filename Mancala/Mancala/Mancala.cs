@@ -32,13 +32,18 @@ namespace Mancala
 
         public void gameFlow()
         {
-            ruleSet = newRuleSet();
+            ruleSetInitialization();
             addPlayers();
             currentPlayer = playerList[0];
 
             gameLoop();
 
             printWinner();
+        }
+
+        public void ruleSetInitialization()
+        {
+            ruleSet = newRuleSet();
         }
 
         public abstract void gameLoop();
@@ -70,6 +75,22 @@ namespace Mancala
             else
             {
                 currentPlayer = playerList[index + 1];
+            }
+        }
+
+        public void handleGame()
+        {
+            int indexCurrentPlayer = getIndex(currentPlayer);
+            if (board.checkIfRowEmpty(indexCurrentPlayer) == false)
+            {
+                board.printBoard(playerList, currentPlayer);
+                lastChoice = takeInput();
+                lastHole = (lastChoice - 1, indexCurrentPlayer);
+                ruleSet.Sowing.applyRule(this);
+                foreach (Rule r in ruleSet.Rules)
+                {
+                    r.applyRule(this);
+                }
             }
         }
 
@@ -173,6 +194,7 @@ namespace Mancala
         {
             while (gameEnded == false)
             {
+                
                 int indexCurrentPlayer = getIndex(currentPlayer);
                 if (board.checkIfRowEmpty(indexCurrentPlayer) == false)
                 {
@@ -185,6 +207,8 @@ namespace Mancala
                         r.applyRule(this);
                     }
                 }
+                
+                //handleGame();
                 ruleSet.WinRule.applyRule(this);
                 updateScores();
             }
