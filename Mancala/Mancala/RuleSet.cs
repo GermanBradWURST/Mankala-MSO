@@ -16,18 +16,17 @@ namespace Mancala
 
     }
 
-    public abstract class Rule
+    public interface Rule
     {
-        public abstract void applyRule(MancalaFactory game);
+        public void applyRule(MancalaTemplate game);
     }
-
 
 
     public class MancalaSowing : Rule
     {
         public MancalaSowing() { }
 
-        public override void applyRule(MancalaFactory game)
+        public void applyRule(MancalaTemplate game)
         {
             int[,] boardArray = game.board.boardArray;
             int indexPit = game.lastHole.Item1;
@@ -76,7 +75,7 @@ namespace Mancala
     {
         public WariSowing() { }
 
-        public override void applyRule(MancalaFactory game)
+        public void applyRule(MancalaTemplate game)
         {
             int[,] boardArray = game.board.boardArray;
             int indexPit = game.lastHole.Item1;
@@ -119,7 +118,7 @@ namespace Mancala
     public class Wari2or3 : Rule
     {
         public Wari2or3() { }
-        public override void applyRule(MancalaFactory game)
+        public void applyRule(MancalaTemplate game)
         {
             int pitIndex = game.lastHole.Item1;
             int playerIndex = game.lastHole.Item2;
@@ -136,7 +135,7 @@ namespace Mancala
     public class LastInHomePit : Rule
     {
         public LastInHomePit() { }
-        public override void applyRule(MancalaFactory game)
+        public void applyRule(MancalaTemplate game)
         {
             int pitIndex = game.lastHole.Item1;
             int playerIndex = game.lastHole.Item2;
@@ -157,7 +156,7 @@ namespace Mancala
     public class StdWinRule : Rule
     {
         public StdWinRule() { }
-        public override void applyRule(MancalaFactory game)
+        public void applyRule(MancalaTemplate game)
         {
             int index = game.getIndex(game.currentPlayer);
             if (game.board.checkIfRowEmpty(index))
@@ -171,7 +170,7 @@ namespace Mancala
     {
         public Capturing() { }
 
-        public override void applyRule(MancalaFactory game)
+        public void applyRule(MancalaTemplate game)
         {
             int currentPlayerIndex = game.getIndex(game.currentPlayer);
 
@@ -189,6 +188,16 @@ namespace Mancala
                 game.board.boardArray[game.board.size, currentPlayerIndex] += game.board.boardArray[oppositePit, oppositePlayer];
                 game.board.boardArray[oppositePit, oppositePlayer] = 0;
             }
+        }
+    }
+
+    public class StdNextPlayer : Rule
+    {
+        public StdNextPlayer() { }
+
+        public void applyRule(MancalaTemplate game)
+        {
+            game.nextPlayer();
         }
     }
 }

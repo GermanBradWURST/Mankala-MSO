@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace Mancala
 {
 
-    public interface RuleSetFactory
+    public interface MakeRuleSet
     {
         public RuleSet newRuleSet();
     }
 
-    public abstract class MancalaFactory : RuleSetFactory
+    public abstract class MancalaTemplate : MakeRuleSet
     {
         public Player currentPlayer;
         public List<Player> playerList = new List<Player>();
@@ -23,7 +23,7 @@ namespace Mancala
         public (int, int) lastHole;
         public bool gameEnded = false;
 
-        public MancalaFactory (int playerAmount, int size, int stoneAmount) //board creation doesn't differ between game modes so it is made in this constructor (subclass constructors refer to their base)
+        public MancalaTemplate (int playerAmount, int size, int stoneAmount) //board creation doesn't differ between game modes so it is made in this constructor (subclass constructors refer to their base)
         {
             board = new Board(playerAmount, size, stoneAmount);
         }
@@ -46,8 +46,31 @@ namespace Mancala
             ruleSet = newRuleSet();
         }
 
-        public abstract void gameLoop();
-        
+        public void gameLoop()
+        {
+            while (gameEnded == false)
+            {
+                handleGame();
+                updateScores();
+                ruleSet.WinRule.applyRule(this);
+            }
+        }
+
+        public void handleGame()
+        {
+            int indexCurrentPlayer = getIndex(currentPlayer);
+            if (board.checkIfRowEmpty(indexCurrentPlayer) == false)
+            {
+                board.printBoard(playerList, currentPlayer);
+                lastChoice = takeInput();
+                lastHole = (lastChoice - 1, indexCurrentPlayer);
+                ruleSet.Sowing.applyRule(this);
+                foreach (Rule r in ruleSet.Rules)
+                {
+                    r.applyRule(this);
+                }
+            }
+        }
 
         public void addPlayers()
         {
@@ -75,22 +98,6 @@ namespace Mancala
             else
             {
                 currentPlayer = playerList[index + 1];
-            }
-        }
-
-        public void handleGame()
-        {
-            int indexCurrentPlayer = getIndex(currentPlayer);
-            if (board.checkIfRowEmpty(indexCurrentPlayer) == false)
-            {
-                board.printBoard(playerList, currentPlayer);
-                lastChoice = takeInput();
-                lastHole = (lastChoice - 1, indexCurrentPlayer);
-                ruleSet.Sowing.applyRule(this);
-                foreach (Rule r in ruleSet.Rules)
-                {
-                    r.applyRule(this);
-                }
             }
         }
 
@@ -186,33 +193,9 @@ namespace Mancala
     }
 
 
-    public class Mancala : MancalaFactory
+    public class Mancala : MancalaTemplate
     {
         public Mancala(int playerAmount, int size, int stoneAmount) : base(playerAmount, size, stoneAmount) { }
-
-        public override void gameLoop()
-        {
-            while (gameEnded == false)
-            {
-                
-                int indexCurrentPlayer = getIndex(currentPlayer);
-                if (board.checkIfRowEmpty(indexCurrentPlayer) == false)
-                {
-                    board.printBoard(playerList, currentPlayer);
-                    lastChoice = takeInput();
-                    lastHole = (lastChoice - 1, indexCurrentPlayer);
-                    ruleSet.Sowing.applyRule(this);
-                    foreach (Rule r in  ruleSet.Rules)
-                    {
-                        r.applyRule(this);
-                    }
-                }
-                
-                //handleGame();
-                ruleSet.WinRule.applyRule(this);
-                updateScores();
-            }
-        }
 
         public override RuleSet newRuleSet()
         {
@@ -229,32 +212,9 @@ namespace Mancala
     }
 
 
-    public class Wari : MancalaFactory
+    public class Wari : MancalaTemplate
     {
         public Wari(int playerAmount, int size, int stoneAmount) : base(playerAmount, size, stoneAmount) { }
-
-        public override void gameLoop()
-        {
-            while (gameEnded == false)
-            {
-                int indexCurrentPlayer = getIndex(currentPlayer);
-                if (board.checkIfRowEmpty(indexCurrentPlayer) == false)
-                {
-                    board.printBoard(playerList, currentPlayer);
-                    lastChoice = takeInput();
-                    lastHole = (lastChoice - 1, indexCurrentPlayer);
-                    ruleSet.Sowing.applyRule(this);
-                    foreach (Rule r in ruleSet.Rules)
-                    {
-                        r.applyRule(this);
-                    }
-                }
-
-                updateScores();
-                nextPlayer();
-                ruleSet.WinRule.applyRule(this);
-            }
-        }
 
         public override RuleSet newRuleSet()
         {
@@ -263,44 +223,23 @@ namespace Mancala
             ruleSet.WinRule = new StdWinRule();
             ruleSet.Rules.Add(new Capturing());
             ruleSet.Rules.Add(new Wari2or3());
+            ruleSet.Rules.Add(new StdNextPlayer());
             return ruleSet;
         }
 
     }
 
 
-    public class ManWari : MancalaFactory
+    public class ManWari : MancalaTemplate
     {
         public ManWari(int playerAmount, int size, int stoneAmount) : base(playerAmount, size, stoneAmount) { }
-
-        public override void gameLoop()
-        {
-            int indexCurrentPlayer = getIndex(currentPlayer);
-            while (gameEnded == false)
-            {
-                if (board.checkIfRowEmpty(indexCurrentPlayer) == false)
-                {
-                    board.printBoard(playerList, currentPlayer);
-                    lastChoice = takeInput();
-                    lastHole = (lastChoice - 1, indexCurrentPlayer);
-                    ruleSet.Sowing.applyRule(this);
-                    foreach (Rule r in ruleSet.Rules)
-                    {
-                        r.applyRule(this);
-                    }
-                }
-
-                updateScores();
-                nextPlayer();
-                ruleSet.WinRule.applyRule(this);
-            }
-        }
 
         public override RuleSet newRuleSet()
         {
             RuleSet ruleSet = new RuleSet();
             ruleSet.Sowing = new WariSowing();
             ruleSet.WinRule = new StdWinRule();
+            ruleSet.Rules.Add(new StdNextPlayer());
             return ruleSet;
         }
 
