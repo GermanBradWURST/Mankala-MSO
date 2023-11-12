@@ -9,22 +9,22 @@ namespace Mancala
 
     public class Player
     {
-        public string name = "<name>";
-        private int score = 0;
+        public string Name = "<name>";
+        private int Score = 0;
+
         public Player()
         {
             Console.Write("Player name: ");
             string input = Console.ReadLine();
 
-            if (input != "") { name = input; }
+            if (input != "") { Name = input; }
         }
 
-        public int getScore()
-        { return this.score; }
+        public int GetScore()
+        { return Score; }
 
-        public void updateScore(int newScore)
-        { this.score = newScore; }
+        public void UpdateScore(int newScore)
+        { Score = newScore; }
 
-        // resetScore()
     }
 }

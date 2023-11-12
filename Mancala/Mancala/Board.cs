@@ -9,62 +9,67 @@ namespace Mancala
 
     public class Board
     {
-        public int size;
-        public int stoneAmount;
-        public int[,] boardArray;
-        public int playerAmount;
-        public int totalStones;
+        public int Size;
+        public int StoneAmount;
+        public int[,] BoardArray;
+        public int PlayerAmount;
+        public int TotalStones;
 
         public Board(int playerAmount, int size, int stoneAmount)
         {
-            this.size = size;
-            this.stoneAmount = stoneAmount;
-            this.playerAmount = playerAmount;
-            this.totalStones = size * stoneAmount * playerAmount;
-            makeBoard();
+            this.Size = size;
+            this.StoneAmount = stoneAmount;
+            this.PlayerAmount = playerAmount;
+            this.TotalStones = size * stoneAmount * playerAmount;
+            MakeBoard();
         }
 
-        private void makeBoard()
+        private void MakeBoard()
         {
-            boardArray = new int[(size + 1), playerAmount];
+            BoardArray = new int[(Size + 1), PlayerAmount];
 
-            for (int y = 0; y < playerAmount; y++)
+            for (int y = 0; y < PlayerAmount; y++)
             {
-                for (int x = 0; x < size; x++)
+                for (int x = 0; x < Size; x++)
                 {
-                    boardArray[x, y] = stoneAmount;
+                    BoardArray[x, y] = StoneAmount;
                 }
 
-                boardArray[size, y] = 0;
+                BoardArray[Size, y] = 0;
             }
         }
 
-        public void printBoard(List<Player> playerList, Player currentPlayer)
+        public void PrintBoard(List<Player> playerList, Player currentPlayer)
         {
-            string cpstring = "    ";
+            string currentPlayerString = "  | ";
 
-            for (int y = playerAmount - 1; y >= 0; y--)
+            for (int y = PlayerAmount - 1; y >= 0; y--)
             {
                 string smallPit = "";
                 bool isCurrentPlayer = playerList[y] == currentPlayer;
 
-                for (int x = 0; x < size; x++)
+                for (int i = 0; i < Size; i++)
                 {
+                    string divider = "  | ";
+                    int displayNumber = BoardArray[i, y];
+                    if (displayNumber > 9)
+                        divider = " | ";
+
                     if (isCurrentPlayer)
                     {
-                        smallPit = smallPit + $"{boardArray[x, y]}";
+                        smallPit = smallPit + $"{displayNumber}{divider}";
                     }
                     else
                     {
-                        smallPit = $"{boardArray[x, y]}" + smallPit;
+                        smallPit = $"{displayNumber}{divider}" + smallPit;
                     }
                 }
 
-                string homePit = $"{boardArray[size, y]}";
+                string homePit = $"{BoardArray[Size, y]}";
 
                 if (isCurrentPlayer)
                 {
-                    cpstring += smallPit + " | " + homePit;
+                    currentPlayerString += smallPit + homePit;
                 }
                 else
                 {
@@ -72,16 +77,16 @@ namespace Mancala
                 }
             }
 
-            Console.WriteLine(cpstring);
-            Console.WriteLine(currentPlayer.name);
+            Console.WriteLine(currentPlayerString);
+            Console.WriteLine(currentPlayer.Name);
         }
 
 
-        public bool checkIfBoardEmpty()
+        public bool CheckIfBoardEmpty()
         {
-            for (int y = 0; y < playerAmount; y++)
+            for (int y = 0; y < PlayerAmount; y++)
             {
-                if (!checkIfRowEmpty(y))
+                if (!CheckIfRowEmpty(y))
                     return false;
             }
 
@@ -89,20 +94,20 @@ namespace Mancala
 
         }
 
-        public bool checkIfRowEmpty(int i)
+        public bool CheckIfRowEmpty(int i)
         {
-            for (int x = 0; x < size; x++)
+            for (int x = 0; x < Size; x++)
             {
-                if (checkNotEmpty(x, i))
+                if (CheckNotEmpty(x, i))
                     return false;
             }
 
             return true;
         }
 
-        public bool checkNotEmpty(int indexPit, int indexPlayer)
+        public bool CheckNotEmpty(int indexPit, int indexPlayer)
         {
-            if (boardArray[indexPit, indexPlayer] != 0)
+            if (BoardArray[indexPit, indexPlayer] != 0)
                 return true;
 
             return false;
@@ -111,19 +116,19 @@ namespace Mancala
 
 
 
-        public (int, int) findOppositeHole((int, int) hole)
+        public (int, int) FindOppositeHole((int, int) hole)
         {
             int pitIndex = hole.Item1;
             int playerIndex = hole.Item2;
             int counter = -1;
 
-            while (pitIndex < size)
+            while (pitIndex < Size)
             {
                 counter++;
                 pitIndex++;
             }
 
-            if (playerIndex + 1 == playerAmount)
+            if (playerIndex + 1 == PlayerAmount)
             {
                 playerIndex = 0;
             }
@@ -134,7 +139,7 @@ namespace Mancala
 
             if (counter < 0)
             {
-                counter = size;
+                counter = Size;
             }
 
             return (counter,  playerIndex);

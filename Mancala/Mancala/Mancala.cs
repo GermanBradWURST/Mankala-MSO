@@ -8,171 +8,171 @@ using System.Threading.Tasks;
 namespace Mancala
 {
 
-    public interface MakeRuleSet
+    public interface IMakeRuleSet
     {
-        public RuleSet newRuleSet();
+        public RuleSet NewRuleSet();
     }
 
-    public abstract class MancalaTemplate : MakeRuleSet
+    public abstract class MancalaTemplate : IMakeRuleSet
     {
-        public Player currentPlayer;
-        public List<Player> playerList = new List<Player>();
-        public Board board;
-        public RuleSet ruleSet;
-        public int lastChoice;
-        public (int, int) lastHole;
-        public bool gameEnded = false;
+        public Player CurrentPlayer;
+        public List<Player> PlayerList = new List<Player>();
+        public Board Board;
+        public RuleSet RuleSet;
+        public int LastChoice;
+        public (int, int) LastHole;
+        public bool GameEnded = false;
 
-        public MancalaTemplate (int playerAmount, int size, int stoneAmount) //board creation doesn't differ between game modes so it is made in this constructor (subclass constructors refer to their base)
+        public MancalaTemplate (int playerAmount, int size, int stoneAmount) //Board creation doesn't differ between game modes so it is made in this constructor (subclass constructors refer to their base)
         {
-            board = new Board(playerAmount, size, stoneAmount);
+            Board = new Board(playerAmount, size, stoneAmount);
         }
 
-        public abstract RuleSet newRuleSet();
+        public abstract RuleSet NewRuleSet();
 
-        public void gameFlow()
+        public void GameFlow()
         {
-            ruleSetInitialization();
-            addPlayers();
-            currentPlayer = playerList[0];
+            RuleSetInitialization();
+            AddPlayers();
+            CurrentPlayer = PlayerList[0];
 
-            gameLoop();
+            GameLoop();
 
-            printWinner();
+            PrintWinner();
         }
 
-        public void ruleSetInitialization()
+        public void RuleSetInitialization()
         {
-            ruleSet = newRuleSet();
+            RuleSet = NewRuleSet();
         }
 
-        public void gameLoop()
+        public void GameLoop()
         {
-            while (gameEnded == false)
+            while (GameEnded == false)
             {
-                handleGame();
-                updateScores();
-                ruleSet.WinRule.applyRule(this);
+                HandleGame();
+                UpdateScores();
+                RuleSet.WinRule.ApplyRule(this);
             }
         }
 
-        public void handleGame()
+        public void HandleGame()
         {
-            int indexCurrentPlayer = getIndex(currentPlayer);
-            if (board.checkIfRowEmpty(indexCurrentPlayer) == false)
+            int indexCurrentPlayer = GetIndex(CurrentPlayer);
+            if (Board.CheckIfRowEmpty(indexCurrentPlayer) == false)
             {
-                board.printBoard(playerList, currentPlayer);
-                lastChoice = takeInput();
-                lastHole = (lastChoice - 1, indexCurrentPlayer);
-                ruleSet.Sowing.applyRule(this);
-                foreach (Rule r in ruleSet.Rules)
+                Board.PrintBoard(PlayerList, CurrentPlayer);
+                LastChoice = TakeInput();
+                LastHole = (LastChoice - 1, indexCurrentPlayer);
+                RuleSet.Sowing.ApplyRule(this);
+                foreach (IRule r in RuleSet.Rules)
                 {
-                    r.applyRule(this);
+                    r.ApplyRule(this);
                 }
             }
         }
 
-        public void addPlayers()
+        public void AddPlayers()
         {
-            for (int i = 0; i < board.playerAmount; i++)
+            for (int i = 0; i < Board.PlayerAmount; i++)
             {
                 Player p = new Player();
-                playerList.Add(p);
+                PlayerList.Add(p);
             }
         }
 
-        public int getIndex(Player p) // the index of a player in the playerList is needed so much that it deserved its own function
+        public int GetIndex(Player p) // the index of a player in the PlayerList is needed so much that it deserved its own function
         {
-            return playerList.IndexOf(p);
+            return PlayerList.IndexOf(p);
         }
 
-        public void nextPlayer()
+        public void NextPlayer()
         {
-            int index = getIndex(currentPlayer);
+            int index = GetIndex(CurrentPlayer);
 
-            if (index == board.playerAmount - 1)
+            if (index == Board.PlayerAmount - 1)
             {
-                currentPlayer = playerList[0];
+                CurrentPlayer = PlayerList[0];
             }
 
             else
             {
-                currentPlayer = playerList[index + 1];
+                CurrentPlayer = PlayerList[index + 1];
             }
         }
 
-        public void updateScores() // even though the score of each player can be found in the boardArray, it is also stored in a Player for clarity and accesibility
+        public void UpdateScores() // even though the Score of each player can be found in the BoardArray, it is also stored in a Player for clarity and accesibility
         {
-            foreach (Player p in playerList)
+            foreach (Player p in PlayerList)
             {
-                int points = getPoint(p);
-                p.updateScore(points);
+                int points = GetPoint(p);
+                p.UpdateScore(points);
             }
         }
 
-        private List<Player> getWinner() // This returns a list because more players could be tied in first (in which case a tie is declared)
+        private List<Player> GetWinner() // This returns a list because more players could be tied in first (in which case a tie is declared)
         {
-            List<Player> pL = new List<Player>();
-            int baseline = 0;
+            List<Player> playerList = new List<Player>();
+            int highestScore = 0;
 
-            foreach (Player p in playerList)
+            foreach (Player p in this.PlayerList)
             {
-                int pS = p.getScore();
-                if (pS > baseline)
+                int playerScore = p.GetScore();
+                if (playerScore > highestScore)
                 {
-                    pL.Clear();
-                    baseline = pS;
-                    pL.Add(p);
+                    playerList.Clear();
+                    highestScore = playerScore;
+                    playerList.Add(p);
                 }
 
-                else if (pS == baseline)
+                else if (playerScore == highestScore)
                 {
-                    pL.Add(p);
+                    playerList.Add(p);
                 }
 
             }
 
-            return pL;
+            return playerList;
         }
-        private void printWinner()
+        private void PrintWinner()
         {
-            List<Player> winPlayers = getWinner();
+            List<Player> winPlayers = GetWinner();
 
             if (winPlayers.Count() > 1)
             {
                 Console.WriteLine("It's a draw between the following players: ");
                 foreach (Player p in winPlayers)
                 {
-                    Console.WriteLine(p.name, $"| {getPoint(p)} points");
+                    Console.WriteLine(p.Name, $"| {GetPoint(p)} points");
                 }
             }
             else
             {
                 Player p = winPlayers[0];
-                Console.WriteLine($"The winner is: {p.name} with {getPoint(p)} points");
+                Console.WriteLine($"The winner is: {p.Name} with {GetPoint(p)} points");
             }
         }
 
-        public int getPoint(Player p)
+        public int GetPoint(Player p)
         {
-            int index = getIndex(p);
-            return board.boardArray[board.size, index];
+            int index = GetIndex(p);
+            return Board.BoardArray[Board.Size, index];
 
         }
 
 
-        public int takeInput() // besides taking input, this function also handles invalid input. The only thing to do after invalid input is to retake input, so it handles everything in one function.
+        public int TakeInput() // besides taking input, this function also handles invalid input. The only thing to do after invalid input is to retake input, so it handles everything in one function.
         {
             while (true)
             {
-                Console.WriteLine($"From which pit would you like to sow the seeds? (left->right | 1->{board.size}): ");
+                Console.WriteLine($"From which pit would you like to sow the seeds? (left->right | 1->{Board.Size}): ");
                 string input = Console.ReadLine();
                 try
                 {
                     int pitIndex = int.Parse(input);
-                    if (1 <= pitIndex && pitIndex <= board.size)
+                    if (1 <= pitIndex && pitIndex <= Board.Size)
                     {
-                        if (board.checkNotEmpty(pitIndex - 1, getIndex(currentPlayer)))
+                        if (Board.CheckNotEmpty(pitIndex - 1, GetIndex(CurrentPlayer)))
                         {
                             return pitIndex;
                         }
@@ -197,7 +197,7 @@ namespace Mancala
     {
         public Mancala(int playerAmount, int size, int stoneAmount) : base(playerAmount, size, stoneAmount) { }
 
-        public override RuleSet newRuleSet()
+        public override RuleSet NewRuleSet()
         {
             RuleSet ruleSet = new RuleSet();
             ruleSet.Sowing = new MancalaSowing();
@@ -216,12 +216,11 @@ namespace Mancala
     {
         public Wari(int playerAmount, int size, int stoneAmount) : base(playerAmount, size, stoneAmount) { }
 
-        public override RuleSet newRuleSet()
+        public override RuleSet NewRuleSet()
         {
             RuleSet ruleSet = new RuleSet();
             ruleSet.Sowing = new WariSowing();
             ruleSet.WinRule = new StdWinRule();
-            ruleSet.Rules.Add(new Capturing());
             ruleSet.Rules.Add(new Wari2or3());
             ruleSet.Rules.Add(new StdNextPlayer());
             return ruleSet;
@@ -234,7 +233,7 @@ namespace Mancala
     {
         public ManWari(int playerAmount, int size, int stoneAmount) : base(playerAmount, size, stoneAmount) { }
 
-        public override RuleSet newRuleSet()
+        public override RuleSet NewRuleSet()
         {
             RuleSet ruleSet = new RuleSet();
             ruleSet.Sowing = new WariSowing();

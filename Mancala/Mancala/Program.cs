@@ -3,20 +3,20 @@
 
     public class Program
     {
-        public static int playerAmount = 2;
-        public static int size = 6;
-        public static int stoneAmount = 4;
+        public static int PlayerAmount = 2;
+        public static int Size = 6;
+        public static int StoneAmount = 4;
 
         public static void Main()
         {
-            Mancala mancalaGame = new Mancala(playerAmount, size, stoneAmount);
-            Wari wariGame = new Wari(playerAmount, size, stoneAmount);
-            ManWari manwariGame = new ManWari(playerAmount, size, stoneAmount);
+            Mancala mancalaGame = new Mancala(PlayerAmount, Size, StoneAmount);
+            Wari wariGame = new Wari(PlayerAmount, Size, StoneAmount);
+            ManWari manwariGame = new ManWari(PlayerAmount, Size, StoneAmount);
 
-            wariGame.gameFlow();
-            mancalaGame.gameFlow();
-            wariGame.gameFlow();
-            manwariGame.gameFlow();
+            wariGame.GameFlow();
+            mancalaGame.GameFlow();
+            wariGame.GameFlow();
+            manwariGame.GameFlow();
         }
     }
 }
