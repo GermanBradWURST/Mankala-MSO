@@ -9,14 +9,34 @@
 
         public static void Main()
         {
-            Mancala mancalaGame = new(PlayerAmount, Size, StoneAmount);
-            Wari wariGame = new(PlayerAmount, Size, StoneAmount);
-            ManWari manwariGame = new(PlayerAmount, Size, StoneAmount);
+            while(true)
+            {
+                Console.WriteLine("Welcom to the Mancala! Type 1 for Mancala, 2 for Wari, 3 for ManWari, and 4 to quit:\n");
+                var input = Console.ReadLine();
 
-            wariGame.GameFlow();
-            mancalaGame.GameFlow();
-            wariGame.GameFlow();
-            manwariGame.GameFlow();
+                if (input == "1")
+                {
+                    Mancala mancalaGame = new(PlayerAmount, Size, StoneAmount);
+                    mancalaGame.GameFlow();
+                }
+                
+                else if (input == "2")
+                {
+                    Wari wariGame = new(PlayerAmount, Size, StoneAmount);
+                    wariGame.GameFlow();
+                }
+
+                else if (input == "3")
+                {
+                    ManWari manwariGame = new(PlayerAmount, Size, StoneAmount);
+                    manwariGame.GameFlow();
+                }
+
+                else if (input == "4")
+                {
+                    break;
+                }
+            }
         }
     }
 }
