@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Mancala
+﻿namespace Mancala
 {
 
     public class Board
@@ -17,10 +11,10 @@ namespace Mancala
 
         public Board(int playerAmount, int size, int stoneAmount)
         {
-            this.Size = size;
-            this.StoneAmount = stoneAmount;
-            this.PlayerAmount = playerAmount;
-            this.TotalStones = size * stoneAmount * playerAmount;
+            Size = size;
+            StoneAmount = stoneAmount;
+            PlayerAmount = playerAmount;
+            TotalStones = size * stoneAmount * playerAmount;
             MakeBoard();
         }
 
@@ -80,7 +74,6 @@ namespace Mancala
             Console.WriteLine(currentPlayerString);
             Console.WriteLine(currentPlayer.Name);
         }
-
 
         public bool CheckIfBoardEmpty()
         {

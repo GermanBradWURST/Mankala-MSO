@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Mancala
+﻿namespace Mancala
 {
     public class RuleSet //The game always has a sowing and winning rule, therefore they are given a variable
     {
         public IRule Sowing;
         public IRule WinRule;
-        public List<IRule> Rules = new List<IRule>(); //Other rules are put in a list, when creating a RuleSet, the order in which you add Rules to this list matters
-
-        public RuleSet() { }
+        public List<IRule> Rules = new(); //Other rules are put in a list, when creating a RuleSet, the order in which you add Rules to this list matters
 
     }
 
@@ -24,8 +16,6 @@ namespace Mancala
 
     public class MancalaSowing : IRule
     {
-        public MancalaSowing() { }
-
         public void ApplyRule(MancalaTemplate game)
         {
             int[,] boardArray = game.Board.BoardArray;
@@ -36,28 +26,14 @@ namespace Mancala
 
             while (stonesPickedUp > 0)
             {
-                if (indexPit == game.Board.Size)
-                {
-                    indexPit = 0;
-
-                    if (indexPlayer + 1 == game.Board.PlayerAmount)
-                    {
-                        indexPlayer = 0;
-                    }
-                    else
-                    {
-                        indexPlayer++;
-                    }
-                }
-
-                else
-                {
-                    indexPit++;
-                }
-
+                (int, int) result = NextIndex(game, indexPit, indexPlayer);
+                indexPit = result.Item1;
+                indexPlayer = result.Item2;
+                
                 stonesPickedUp--;
                 boardArray[indexPit, indexPlayer]++;
             }
+
 
             game.LastHole = (indexPit, indexPlayer);
             game.Board.BoardArray = boardArray;
@@ -69,12 +45,34 @@ namespace Mancala
                 ApplyRule(game);
             }
         }
+
+        public static (int, int) NextIndex(MancalaTemplate game, int currentPitIndex, int currentPlayerIndex)
+        {
+            if (currentPitIndex == game.Board.Size)
+            {
+                currentPitIndex = 0;
+
+                if (currentPlayerIndex + 1 == game.Board.PlayerAmount)
+                {
+                    currentPlayerIndex = 0;
+                }
+                else
+                {
+                    currentPlayerIndex++;
+                }
+            }
+
+            else
+            {
+                currentPitIndex++;
+            }
+
+            return (currentPitIndex, currentPlayerIndex);
+        }
     }
 
     public class WariSowing : IRule
     {
-        public WariSowing() { }
-
         public void ApplyRule(MancalaTemplate game)
         {
             int[,] boardArray = game.Board.BoardArray;
@@ -85,24 +83,9 @@ namespace Mancala
 
             while (stonesPickedUp > 0)
             {
-                if (indexPit + 1 == game.Board.Size)
-                {
-                    indexPit = 0;
-
-                    if (indexPlayer + 1 == game.Board.PlayerAmount)
-                    {
-                        indexPlayer = 0;
-                    }
-                    else
-                    {
-                        indexPlayer++;
-                    }
-                }
-
-                else
-                {
-                    indexPit++;
-                }
+                (int, int) result = NextIndex(game, indexPit, indexPlayer);
+                indexPit = result.Item1;
+                indexPlayer = result.Item2;
 
                 stonesPickedUp--;
                 boardArray[indexPit, indexPlayer]++;
@@ -113,11 +96,34 @@ namespace Mancala
             game.LastHole = (indexPit, indexPlayer);
 
         }
+
+        public static (int, int) NextIndex(MancalaTemplate game, int currentPitIndex, int currentPlayerIndex)
+        {
+            if (currentPitIndex + 1 == game.Board.Size)
+            {
+                currentPitIndex = 0;
+
+                if (currentPlayerIndex + 1 == game.Board.PlayerAmount)
+                {
+                    currentPlayerIndex = 0;
+                }
+                else
+                {
+                    currentPlayerIndex++;
+                }
+            }
+
+            else
+            {
+                currentPitIndex++;
+            }
+
+            return (currentPitIndex, currentPlayerIndex);
+        }
     }
 
-    public class Wari2or3 : IRule
+    public class Wari2Or3 : IRule
     {
-        public Wari2or3() { }
         public void ApplyRule(MancalaTemplate game)
         {
             int pitIndex = game.LastHole.Item1;
@@ -134,7 +140,6 @@ namespace Mancala
 
     public class LastInHomePit : IRule
     {
-        public LastInHomePit() { }
         public void ApplyRule(MancalaTemplate game)
         {
             int pitIndex = game.LastHole.Item1;
@@ -155,7 +160,6 @@ namespace Mancala
 
     public class StdWinRule : IRule
     {
-        public StdWinRule() { }
         public void ApplyRule(MancalaTemplate game)
         {
             int index = game.GetIndex(game.CurrentPlayer);
@@ -168,14 +172,11 @@ namespace Mancala
 
     public class Capturing : IRule
     {
-        public Capturing() { }
-
         public void ApplyRule(MancalaTemplate game)
         {
             int currentPlayerIndex = game.GetIndex(game.CurrentPlayer);
 
             int playerIndex = game.LastHole.Item2;
-            int pitIndex = game.LastHole.Item1;
 
             (int, int) oppositeHole = game.Board.FindOppositeHole(game.LastHole);
             int oppositePit = oppositeHole.Item1;
@@ -193,8 +194,6 @@ namespace Mancala
 
     public class StdNextPlayer : IRule
     {
-        public StdNextPlayer() { }
-
         public void ApplyRule(MancalaTemplate game)
         {
             game.NextPlayer();

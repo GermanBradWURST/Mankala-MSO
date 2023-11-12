@@ -9,9 +9,9 @@
 
         public static void Main()
         {
-            Mancala mancalaGame = new Mancala(PlayerAmount, Size, StoneAmount);
-            Wari wariGame = new Wari(PlayerAmount, Size, StoneAmount);
-            ManWari manwariGame = new ManWari(PlayerAmount, Size, StoneAmount);
+            Mancala mancalaGame = new(PlayerAmount, Size, StoneAmount);
+            Wari wariGame = new(PlayerAmount, Size, StoneAmount);
+            ManWari manwariGame = new(PlayerAmount, Size, StoneAmount);
 
             wariGame.GameFlow();
             mancalaGame.GameFlow();

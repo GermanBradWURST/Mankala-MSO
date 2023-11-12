@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Mancala
+﻿namespace Mancala
 {
 
     public interface IMakeRuleSet
@@ -16,14 +9,14 @@ namespace Mancala
     public abstract class MancalaTemplate : IMakeRuleSet
     {
         public Player CurrentPlayer;
-        public List<Player> PlayerList = new List<Player>();
+        public List<Player> PlayerList = new();
         public Board Board;
         public RuleSet RuleSet;
         public int LastChoice;
         public (int, int) LastHole;
         public bool GameEnded = false;
 
-        public MancalaTemplate (int playerAmount, int size, int stoneAmount) //Board creation doesn't differ between game modes so it is made in this constructor (subclass constructors refer to their base)
+        public MancalaTemplate(int playerAmount, int size, int stoneAmount) //Board creation doesn't differ between game modes so it is made in this constructor (subclass constructors refer to their base)
         {
             Board = new Board(playerAmount, size, stoneAmount);
         }
@@ -166,10 +159,10 @@ namespace Mancala
             while (true)
             {
                 Console.WriteLine($"From which pit would you like to sow the seeds? (left->right | 1->{Board.Size}): ");
-                string input = Console.ReadLine();
+                var input = Console.ReadLine();
                 try
                 {
-                    int pitIndex = int.Parse(input);
+                    var pitIndex = int.Parse(input);
                     if (1 <= pitIndex && pitIndex <= Board.Size)
                     {
                         if (Board.CheckNotEmpty(pitIndex - 1, GetIndex(CurrentPlayer)))
@@ -199,10 +192,11 @@ namespace Mancala
 
         public override RuleSet NewRuleSet()
         {
-            RuleSet ruleSet = new RuleSet();
-            ruleSet.Sowing = new MancalaSowing();
-            ruleSet.WinRule = new StdWinRule();
-
+            RuleSet ruleSet = new()
+            {
+                Sowing = new MancalaSowing(),
+                WinRule = new StdWinRule()
+            };
 
             ruleSet.Rules.Add(new LastInHomePit());
             return ruleSet;
@@ -218,10 +212,12 @@ namespace Mancala
 
         public override RuleSet NewRuleSet()
         {
-            RuleSet ruleSet = new RuleSet();
-            ruleSet.Sowing = new WariSowing();
-            ruleSet.WinRule = new StdWinRule();
-            ruleSet.Rules.Add(new Wari2or3());
+            RuleSet ruleSet = new()
+            {
+                Sowing = new WariSowing(),
+                WinRule = new StdWinRule()
+            };
+            ruleSet.Rules.Add(new Wari2Or3());
             ruleSet.Rules.Add(new StdNextPlayer());
             return ruleSet;
         }
@@ -235,9 +231,11 @@ namespace Mancala
 
         public override RuleSet NewRuleSet()
         {
-            RuleSet ruleSet = new RuleSet();
-            ruleSet.Sowing = new WariSowing();
-            ruleSet.WinRule = new StdWinRule();
+            RuleSet ruleSet = new()
+            {
+                Sowing = new WariSowing(),
+                WinRule = new StdWinRule()
+            };
             ruleSet.Rules.Add(new StdNextPlayer());
             return ruleSet;
         }
