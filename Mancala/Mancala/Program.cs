@@ -1,4 +1,6 @@
-﻿namespace Mancala
+﻿using System.Security.Cryptography.X509Certificates;
+
+namespace Mancala
 {
 
     public class Program
@@ -13,6 +15,8 @@
             {
                 Console.WriteLine("Welcom to the Mancala! Type 1 for Mancala, 2 for Wari, 3 for ManWari, and 4 to quit:\n");
                 var input = Console.ReadLine();
+
+                ChangeSettings();
 
                 if (input == "1")
                 {
@@ -36,7 +40,38 @@
                 {
                     break;
                 }
+
             }
+        }
+
+        public static void ChangeSettings()
+        {
+            Console.WriteLine("How many players?\n");
+            var input = Console.ReadLine();
+            try
+            {
+                var i = int.Parse(input);
+                PlayerAmount = i;
+            }
+            catch { }
+
+            Console.WriteLine("How many pits excluding the homepit?\n");
+            input = Console.ReadLine();
+            try
+            {
+                var i = int.Parse(input);
+                Size = i;
+            }
+            catch { }
+
+            Console.WriteLine("How many stones in each pit?\n");
+            input = Console.ReadLine();
+            try
+            {
+                var i = int.Parse(input);
+                StoneAmount = i;
+            }
+            catch { }
         }
     }
 }
