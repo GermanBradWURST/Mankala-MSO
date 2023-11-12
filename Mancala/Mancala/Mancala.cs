@@ -56,11 +56,15 @@
             {
                 Board.PrintBoard(PlayerList, CurrentPlayer);
                 LastChoice = TakeInput();
-                LastHole = (LastChoice - 1, indexCurrentPlayer);
-                RuleSet.Sowing.ApplyRule(this);
-                foreach (IRule r in RuleSet.Rules)
+                if (LastChoice != 1919)
                 {
-                    r.ApplyRule(this);
+
+                    LastHole = (LastChoice - 1, indexCurrentPlayer);
+                    RuleSet.Sowing.ApplyRule(this);
+                    foreach (IRule r in RuleSet.Rules)
+                    {
+                        r.ApplyRule(this);
+                    }
                 }
             }
         }
@@ -158,7 +162,7 @@
         {
             while (true)
             {
-                Console.WriteLine($"From which pit would you like to sow the seeds? (left->right | 1->{Board.Size}): ");
+                Console.WriteLine($"(Type quit to exit) From which pit would you like to sow the seeds? (left->right | 1->{Board.Size}): ");
                 var input = Console.ReadLine();
                 try
                 {
@@ -178,8 +182,21 @@
                     {
                         Console.WriteLine("The pit you chose is out of bounds");
                     }
+                }   
+                catch
+                {
+                    if (input == "quit")
+                    {
+                        GameEnded = true;
+                        return 1919;
+                    }
+
+                    else
+                    {
+
+                        Console.WriteLine("Please enter a whole number");
+                    }
                 }
-                catch { Console.WriteLine("Please enter a whole number"); }
             }
 
         }
@@ -198,6 +215,7 @@
                 WinRule = new StdWinRule()
             };
 
+            ruleSet.Rules.Add(new Capturing());
             ruleSet.Rules.Add(new LastInHomePit());
             return ruleSet;
         }
@@ -233,9 +251,12 @@
         {
             RuleSet ruleSet = new()
             {
-                Sowing = new WariSowing(),
+                Sowing = new MancalaSowing(),
                 WinRule = new StdWinRule()
             };
+
+            ruleSet.Rules.Add(new Wari2Or3());
+            ruleSet.Rules.Add(new Capturing());
             ruleSet.Rules.Add(new StdNextPlayer());
             return ruleSet;
         }
