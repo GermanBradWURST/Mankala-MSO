@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-
-namespace Mancala
+﻿namespace Mancala
 {
 
     public class Program
